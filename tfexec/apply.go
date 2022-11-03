@@ -8,6 +8,7 @@ import (
 )
 
 type applyConfig struct {
+	args      []string
 	backup    string
 	dirOrPlan string
 	lock      bool
@@ -90,6 +91,10 @@ func (opt *ReattachOption) configureApply(conf *applyConfig) {
 	conf.reattachInfo = opt.info
 }
 
+func (opt *ArgsOption) configureApply(conf *applyConfig) {
+	conf.args = opt.args
+}
+
 // Apply represents the terraform apply subcommand.
 func (tf *Terraform) Apply(ctx context.Context, opts ...ApplyOption) error {
 	cmd, err := tf.applyCmd(ctx, opts...)
@@ -106,7 +111,11 @@ func (tf *Terraform) applyCmd(ctx context.Context, opts ...ApplyOption) (*exec.C
 		o.configureApply(&c)
 	}
 
-	args := []string{"apply", "-no-color", "-auto-approve", "-input=false"}
+	var args []string
+
+	if len(c.args) == 0 {
+		args = []string{"apply", "-no-color", "-auto-approve", "-input=false"}
+	}
 
 	// string opts: only pass if set
 	if c.backup != "" {

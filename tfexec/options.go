@@ -288,6 +288,10 @@ type ReattachOption struct {
 	info ReattachInfo
 }
 
+type ArgsOption struct {
+	args []string
+}
+
 func (info ReattachInfo) marshalString() (string, error) {
 	reattachStr, err := json.Marshal(info)
 	if err != nil {
